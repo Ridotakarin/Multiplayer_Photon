@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: da6cca855e11b54489b4d40e8ae3d934
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 284380
+  packageName: Game Console - Commands and Debug
+  packageVersion: 1.2
+  assetPath: Assets/Packs/YagirConsole/Version.txt
+  uploadId: 678792

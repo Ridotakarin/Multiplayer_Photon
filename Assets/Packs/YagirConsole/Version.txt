@@ -1,0 +1,16 @@
+Version 1.2
+
+-----------------------------------
+
+Change log 1.2
+Errors Spam Optimization
+Reduce allocations,
+Errors traceStack copy
+Other optimizations
+
+Change log 1.1
+Log types sorting
+Possibility to copy messages
+Bug Fix
+Notifications System
+Small Console Widget

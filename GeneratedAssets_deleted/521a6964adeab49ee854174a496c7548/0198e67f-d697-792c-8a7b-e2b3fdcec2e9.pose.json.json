@@ -1,0 +1,11 @@
+{
+    "asset": "521a6964adeab49ee854174a496c7548",
+    "fileName": "0198e67f-d697-792c-8a7b-e2b3fdcec2e9.pose.json",
+    "prompt": "idle pose holding axe in right hand",
+    "negativePrompt": "",
+    "model": "a9c27ca4-3ec9-43e8-96cd-ee891aba64c5",
+    "modelName": "Text to Motion",
+    "customSeed": 1725738480,
+    "w3CTraceId": "8dcff49074b8f4fb53be18ae85403109",
+    "isTrimmed": false
+}

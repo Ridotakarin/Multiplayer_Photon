@@ -1,0 +1,11 @@
+{
+    "asset": "521a6964adeab49ee854174a496c7548",
+    "fileName": "0198e67d-0658-792f-a012-314a762bc3a9.pose.json",
+    "prompt": "warrior is holding axe in right hand and in defensive pose, stand still with soft breath with no move",
+    "negativePrompt": "",
+    "model": "a9c27ca4-3ec9-43e8-96cd-ee891aba64c5",
+    "modelName": "Text to Motion",
+    "customSeed": 922681513,
+    "w3CTraceId": "b3dac2403847302ad8c41704d226e086",
+    "isTrimmed": false
+}

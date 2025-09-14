@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b860b0ac745b4754d84352c762c486a4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 284380
+  packageName: Game Console - Commands and Debug
+  packageVersion: 1.2
+  assetPath: Assets/Packs/YagirConsole/LoggerData.asset
+  uploadId: 678792

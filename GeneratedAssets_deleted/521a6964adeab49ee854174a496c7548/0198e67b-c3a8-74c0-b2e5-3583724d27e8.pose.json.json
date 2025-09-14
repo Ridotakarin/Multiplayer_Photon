@@ -1,0 +1,11 @@
+{
+    "asset": "521a6964adeab49ee854174a496c7548",
+    "fileName": "0198e67b-c3a8-74c0-b2e5-3583724d27e8.pose.json",
+    "prompt": "character holding axe in right hand and in defensive pose, idling with soft breath",
+    "negativePrompt": "",
+    "model": "a9c27ca4-3ec9-43e8-96cd-ee891aba64c5",
+    "modelName": "Text to Motion",
+    "customSeed": 1686439224,
+    "w3CTraceId": "8a4db25db5b3417c5f431a288a4440a6",
+    "isTrimmed": false
+}

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a70b3645f283a6c41a1364eb71ef29c1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 284380
+  packageName: Game Console - Commands and Debug
+  packageVersion: 1.2
+  assetPath: Assets/Packs/YagirConsole/Fonts/RobotoMono-Regular SDF.asset
+  uploadId: 678792

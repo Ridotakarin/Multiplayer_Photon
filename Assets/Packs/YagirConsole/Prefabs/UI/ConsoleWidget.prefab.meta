@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c10843e44d439d24fb8667cea1ab822b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 284380
+  packageName: Game Console - Commands and Debug
+  packageVersion: 1.2
+  assetPath: Assets/Packs/YagirConsole/Prefabs/UI/ConsoleWidget.prefab
+  uploadId: 678792

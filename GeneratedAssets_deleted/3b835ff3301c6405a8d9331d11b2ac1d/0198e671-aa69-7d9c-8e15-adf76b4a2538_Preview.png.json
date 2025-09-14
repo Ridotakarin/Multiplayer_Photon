@@ -1,0 +1,11 @@
+{
+    "asset": "3b835ff3301c6405a8d9331d11b2ac1d",
+    "fileName": "0198e671-aa69-7d9c-8e15-adf76b4a2538_Preview.png",
+    "prompt": "dessert ground with smooth sand",
+    "negativePrompt": "text, humand, animal",
+    "model": "575ecf67-4425-4939-97b9-5e138b8ee234",
+    "modelName": "Unity Texture2D",
+    "customSeed": 1518757860,
+    "w3CTraceId": "077731fc18b96b321c3ac5e596481dd1",
+    "refinementMode": "Generation"
+}

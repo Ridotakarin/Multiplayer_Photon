@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b86efbb0323153048b52ebf45b89a58d
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 284380
+  packageName: Game Console - Commands and Debug
+  packageVersion: 1.2
+  assetPath: Assets/Packs/YagirConsole/Prefabs/UI/Toggle.prefab
+  uploadId: 678792

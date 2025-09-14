@@ -1,0 +1,11 @@
+{
+    "asset": "3b835ff3301c6405a8d9331d11b2ac1d",
+    "fileName": "0198e670-6227-7449-96b6-a67b6fe3f649_Preview.png",
+    "prompt": "Vật liệu mô tả mặt đất của sa mạc đầy cát và nắng gió",
+    "negativePrompt": "chữ, người, động vật",
+    "model": "575ecf67-4425-4939-97b9-5e138b8ee234",
+    "modelName": "Unity Texture2D",
+    "customSeed": 465624813,
+    "w3CTraceId": "0b77836fac29f4507ccb3b6e040c26c2",
+    "refinementMode": "Generation"
+}
