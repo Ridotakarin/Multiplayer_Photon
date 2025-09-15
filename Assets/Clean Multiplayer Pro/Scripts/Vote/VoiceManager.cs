@@ -1,14 +1,14 @@
 #if CMPSETUP_COMPLETE
 using Fusion;
 using UnityEngine;
-using Photon.Voice.Unity;
+//using Photon.Voice.Unity;
 using StarterAssets;
 
 public class VoiceManager : MonoBehaviour
 {
     // Start is called before the first frame update
     public NetworkRunner runner;
-    public Recorder recorder;
+    //public Recorder recorder;
     private StarterAssetsInputs _input;
     private PlayerWorldUIManager _playerUIManager;
 
@@ -19,7 +19,7 @@ public class VoiceManager : MonoBehaviour
         if (!runner.IsConnectedToServer || ReferenceEquals(_input,null))
             return;
 
-        recorder.TransmitEnabled = _input.pushToTalk;
+        //recorder.TransmitEnabled = _input.pushToTalk;
         _playerUIManager.SetIsSpeaking(_input.pushToTalk);
     }
 

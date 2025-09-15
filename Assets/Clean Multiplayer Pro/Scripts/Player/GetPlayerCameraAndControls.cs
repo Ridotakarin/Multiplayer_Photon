@@ -1,12 +1,13 @@
 #if CMPSETUP_COMPLETE
 using System;
 using System.Collections;
-using Cinemachine;
+
 using UnityEngine;
 using Fusion;
 using StarterAssets;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
+using Unity.Cinemachine;
 
 namespace AvocadoShark
 {
@@ -33,7 +34,7 @@ namespace AvocadoShark
                 _rigidbody.MovePosition(new Vector3(Random.Range(-7.6f, 14.2f), 0,
                     Random.Range(-31.48f, -41.22f)));
                 var virtualCamera = GameObject.Find("Player Follow Camera");
-                virtualCamera.GetComponent<CinemachineVirtualCamera>().Follow = playerCameraRoot;
+                virtualCamera.GetComponent<CinemachineCamera>().Follow = playerCameraRoot;
 
                 if (UseMobileControls)
                 {

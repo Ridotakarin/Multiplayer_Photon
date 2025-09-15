@@ -8,8 +8,8 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using Photon.Voice.Fusion;
-using Photon.Voice.Unity;
+
+
 using StarterAssets;
 using Fusion.Photon.Realtime;
 
@@ -56,8 +56,8 @@ namespace AvocadoShark
 
         [SerializeField] public Vector3 CustomLocation;
 
-        private FusionVoiceClient _fvc;
-        private Recorder _recorder;
+        //private FusionVoiceClient _fvc;
+        //private Recorder _recorder;
         private VoiceManager _voiceManager;
 
         [Header("Loading Screen")] public LoadingScreen loadingScreenScript;
@@ -314,9 +314,9 @@ namespace AvocadoShark
         private void SetUpComponents()
         {
             Runner = Instantiate(runnerPrefab);
-            _fvc = Runner.GetComponent<FusionVoiceClient>();
-            _recorder = Runner.GetComponentInChildren<Recorder>();
-            _voiceManager = Runner.GetComponentInChildren<VoiceManager>();
+            //_fvc = Runner.GetComponent<FusionVoiceClient>();
+            //_recorder = Runner.GetComponentInChildren<Recorder>();
+            //_voiceManager = Runner.GetComponentInChildren<VoiceManager>();
             Runner.AddCallbacks(this);
         }
 

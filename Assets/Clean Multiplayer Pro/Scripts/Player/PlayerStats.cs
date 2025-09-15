@@ -15,7 +15,7 @@ namespace AvocadoShark
         [Networked] public TickTimer VoteTime { get; set; }
         [Networked] public NetworkString<_32> PlayerName { get; set; }
         [Networked] public NetworkString<_32> VoteInitiatorPlayerName { get; set; }
-        [Networked] public NetworkBool VoteKick { get; set; }
+        //[Networked] public NetworkBool VoteKick { get; set; }
         [Networked] public int PositiveVotes { get; set; }
         [Networked] public int NegativeVotes { get; set; }
 
@@ -64,10 +64,10 @@ namespace AvocadoShark
                         HandleChangeDetection<NetworkString<_32>>(nameof(PlayerName), previousBuffer, currentBuffer,
                             UpdatePlayerName);
                         break;
-                    case nameof(VoteKick):
-                        HandleChangeDetection<NetworkBool>(nameof(VoteKick), previousBuffer, currentBuffer,
-                            OnVoteKickStateChanged);
-                        break;
+                    //case nameof(VoteKick):
+                    //    HandleChangeDetection<NetworkBool>(nameof(VoteKick), previousBuffer, currentBuffer,
+                    //        OnVoteKickStateChanged);
+                    //    break;
                     case nameof(PositiveVotes):
                         HandleChangeDetection<int>(nameof(PositiveVotes), previousBuffer, currentBuffer,
                             OnPositiveVote);
@@ -89,17 +89,17 @@ namespace AvocadoShark
         }
         private void Update()
         {
-            if(!VoteKick)
-                return;
+            //if(!VoteKick)
+            //    return;
             OnVoteTimeUpdated?.Invoke(Mathf.RoundToInt(VoteTime.RemainingTime(Runner).GetValueOrDefault()));
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (VoteTime.Expired(Runner) && VoteKick)
-            {
-                VoteKick = false;
-            }
+            //if (VoteTime.Expired(Runner) && VoteKick)
+            //{
+            //    VoteKick = false;
+            //}
         }
         
         // public override void FixedUpdateNetwork()
@@ -143,18 +143,18 @@ namespace AvocadoShark
                 return;
             }
 
-            if (VoteKick == true)
-            {
-                Debug.Log($"Votekick already in process");
-                return;
-            }
+            //if (VoteKick == true)
+            //{
+            //    Debug.Log($"Votekick already in process");
+            //    return;
+            //}
 
             if (Runner.GameMode == GameMode.Shared)
             {
                 Debug.Log($"Initializing Vote kick for {Runner.GameMode} Mode");
                 if (Object.HasStateAuthority)
                 {
-                    VoteKick = true;
+                    //VoteKick = true;
                     VoteInitiatorPlayerName = PlayerName;
                     VoteTime = TickTimer.CreateFromSeconds(Runner, maxVoteTime);
                 }
@@ -229,8 +229,8 @@ namespace AvocadoShark
 
         public void AddPositiveVote()
         {
-            if (!VoteKick)
-                return;
+            //if (!VoteKick)
+            //    return;
             if (Object.HasStateAuthority)
                 PositiveVotes += 1;
             else
@@ -239,8 +239,8 @@ namespace AvocadoShark
 
         public void AddNegativeVote()
         {
-            if (!VoteKick)
-                return;
+            //if (!VoteKick)
+            //    return;
             if (Object.HasStateAuthority)
                 NegativeVotes += 1;
             else
@@ -276,12 +276,12 @@ namespace AvocadoShark
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             SessionPlayers.instance.RemovePlayer(this);
-            if (VoteKick)
-            {
-                SessionPlayers.instance.RemoveVoteKick(this);
-                RPC_PlayerVoteResultMessage(
-                    $"Vote kick failed");
-            }
+            //if (VoteKick)
+            //{
+            //    SessionPlayers.instance.RemoveVoteKick(this);
+            //    RPC_PlayerVoteResultMessage(
+            //        $"Vote kick failed");
+            //}
         }
 
         [Rpc(sources: RpcSources.Proxies, targets: RpcTargets.StateAuthority)]
@@ -289,7 +289,7 @@ namespace AvocadoShark
         {
             Debug.Log("RPC_BeginVoteKick");
            // NegativeVotes = 1;                  // first negative vote for player who is being voted out
-            VoteKick = true;
+            //VoteKick = true;
             VoteTime = TickTimer.CreateFromSeconds(Runner, maxVoteTime);
         }
 
