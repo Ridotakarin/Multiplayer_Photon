@@ -1,4 +1,4 @@
-﻿#if CMPSETUP_COMPLETE
+#if CMPSETUP_COMPLETE
 using Fusion;
 using UnityEngine;
 
@@ -6,16 +6,11 @@ namespace AvocadoShark
 {
     public class PlayerPosResetter : NetworkBehaviour
     {
-        private NetworkObject networkObject;
         public float minYValue = -10f;
-        void Awake()
-        {
-            networkObject = GetComponent<NetworkObject>();
-        }
 
         void LateUpdate()
         {
-            if (networkObject != null && networkObject.HasStateAuthority)
+            if (HasStateAuthority)
             {
                 if (transform.position.y < minYValue)
                 {
