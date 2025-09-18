@@ -79,6 +79,7 @@ public class MenuManager : MonoBehaviour
 
     private void SelectPreviousCharacter()
     {
+        
         if (SelectedCharacterIndex > 0)
         {
             SelectedCharacterIndex--;
@@ -109,6 +110,8 @@ public class MenuManager : MonoBehaviour
         for (int i = 0; i < characterDisplayObjects.Length; i++)
         {
             characterDisplayObjects[i].SetActive(i == SelectedCharacterIndex);
+            Debug.Log("Number: " + SelectedCharacterIndex);
+
         }
 
         // Cập nhật tên

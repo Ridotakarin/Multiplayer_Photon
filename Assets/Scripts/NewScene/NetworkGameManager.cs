@@ -25,6 +25,9 @@ namespace AvocadoShark
         public Transform[] spawnPoints;
         private Queue<Transform> availableSpawnPoints;
 
+        [Networked]
+        public bool IsGameStarted { get; set; } = false;
+
         [SerializeField]private NetworkRunner _runner;
         private Dictionary<PlayerRef, NetworkObject> _spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
 
@@ -39,56 +42,49 @@ namespace AvocadoShark
             {
                 Destroy(gameObject);
             }
-            _runner = FindObjectOfType<NetworkRunner>();
-        }
+            _runner = GameObject.FindAnyObjectByType<NetworkRunner>();
 
-        private void InitializeSpawnPoints()
-        {
-            availableSpawnPoints = new Queue<Transform>();
-            Shuffle(spawnPoints);
-            foreach (var point in spawnPoints)
+            // Nếu không tìm thấy, tạo mới từ prefab
+            if (_runner == null)
             {
-                availableSpawnPoints.Enqueue(point);
+                _runner = Instantiate(runnerPrefab);
+                _runner.name = "NetworkRunner";
+                _runner.ProvideInput = true;
+                _runner.AddCallbacks(this);
             }
         }
 
-        private void Shuffle<T>(T[] array)
-        {
-            for (int i = array.Length - 1; i > 0; i--)
-            {
-                int rnd = Random.Range(0, i + 1);
-                T temp = array[i];
-                array[i] = array[rnd];
-                array[rnd] = temp;
-            }
-        }
 
         #region INetworkRunnerCallbacks
 
         public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            Debug.Log($">>> OnPlayerJoined: {player}, Local={runner.LocalPlayer}");
-
             if (runner.IsServer)
             {
-                // Lấy prefab nhân vật đã chọn từ MenuManager
-                NetworkPrefabRef selectedPrefab = playerPrefabs[MenuManager.SelectedCharacterIndex];
+                // Chọn prefab dựa trên lựa chọn của người chơi
+                var selectedIndex = MenuManager.SelectedCharacterIndex;
+                var selectedPrefab = playerPrefabs[selectedIndex];
 
-                // Lấy vị trí spawn cố định cho Lobby
-                Vector3 lobbySpawnPos = new Vector3(0, 1, 0);
-                Quaternion lobbySpawnRot = Quaternion.identity;
+                // Lấy một điểm spawn từ hàng đợi
+                Transform spawnPoint = availableSpawnPoints.Dequeue();
+                Vector3 spawnPos = spawnPoint.position;
+                Quaternion spawnRot = spawnPoint.rotation;
 
-                // Spawn player prefab
-                NetworkObject playerObj = runner.Spawn(selectedPrefab, lobbySpawnPos, lobbySpawnRot, player);
+                // Spawn player prefab tại vị trí chờ
+                NetworkObject playerObj = runner.Spawn(selectedPrefab, spawnPos, spawnRot, player);
                 runner.SetPlayerObject(player, playerObj);
+
+                // Gán playerController và lưu điểm spawn
+                var playerController = playerObj.GetComponent<PlayerNetworkController>();
+                playerController.SetInitialSpawnPoint(spawnPoint.position, spawnPoint.rotation);
 
                 _spawnedPlayers[player] = playerObj;
 
-                // Cập nhật thông tin người chơi trên mạng (tên và lựa chọn nhân vật)
+                // Cập nhật thông tin người chơi trên mạng
                 PlayerNames.Add(player, MenuManager.PlayerName);
-                PlayerCharacterSelections.Add(player, MenuManager.SelectedCharacterIndex);
+                PlayerCharacterSelections.Add(player, selectedIndex);
 
-                Debug.Log($">>> Spawned {playerObj.name} for {player}, HasInputAuthority={playerObj.HasInputAuthority}");
+                Debug.Log($">>> Spawned {playerObj.name} at waiting area for {player}");
             }
         }
 
