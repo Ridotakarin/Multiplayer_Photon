@@ -5,18 +5,27 @@ using Fusion.Sockets;
 
 namespace AvocadoShark
 {
-    public class NetworkGameManager : MonoBehaviour, INetworkRunnerCallbacks
+    public class NetworkGameManager : NetworkRunnerCall
     {
         public static NetworkGameManager Instance;
 
         [Header("Player Prefab")]
-        public NetworkPrefabRef playerPrefab;
+        public NetworkPrefabRef[] playerPrefabs;
+
+        [Networked, Capacity(4)]
+        public NetworkDictionary<PlayerRef, string> PlayerNames => default;
+        [Networked, Capacity(4)]
+        public NetworkDictionary<PlayerRef, int> PlayerCharacterSelections => default;
+
+
+        [Header("Runner Prefab")]
+        [SerializeField] private NetworkRunner runnerPrefab;
 
         [Header("Spawn Settings")]
-        public bool useRandomSpawn = true;
-        public Vector3 customSpawn = new Vector3(0, 0, 0);
+        public Transform[] spawnPoints;
+        private Queue<Transform> availableSpawnPoints;
 
-        private NetworkRunner _runner;
+        [SerializeField]private NetworkRunner _runner;
         private Dictionary<PlayerRef, NetworkObject> _spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
 
         private void Awake()
@@ -30,47 +39,60 @@ namespace AvocadoShark
             {
                 Destroy(gameObject);
             }
+            _runner = FindObjectOfType<NetworkRunner>();
         }
 
-        private async void Start()
+        private void InitializeSpawnPoints()
         {
-            // Khởi động runner (host hoặc client)
-            _runner = gameObject.AddComponent<NetworkRunner>();
-            _runner.ProvideInput = true;
-            _runner.AddCallbacks(this);
-
-            var result = await _runner.StartGame(new StartGameArgs()
+            availableSpawnPoints = new Queue<Transform>();
+            Shuffle(spawnPoints);
+            foreach (var point in spawnPoints)
             {
-                GameMode = GameMode.Shared,    // Hoặc GameMode.Host / Client tuỳ bạn muốn
-                SessionName = "TestRoom",
-                Scene = SceneRef.FromIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex),
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-            });
+                availableSpawnPoints.Enqueue(point);
+            }
+        }
 
-            if (!result.Ok)
+        private void Shuffle<T>(T[] array)
+        {
+            for (int i = array.Length - 1; i > 0; i--)
             {
-                Debug.LogError($"StartGame failed: {result.ShutdownReason}");
+                int rnd = Random.Range(0, i + 1);
+                T temp = array[i];
+                array[i] = array[rnd];
+                array[rnd] = temp;
             }
         }
 
         #region INetworkRunnerCallbacks
 
-        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
+            Debug.Log($">>> OnPlayerJoined: {player}, Local={runner.LocalPlayer}");
+
             if (runner.IsServer)
             {
-                Debug.Log($"Player {player} joined");
+                // Lấy prefab nhân vật đã chọn từ MenuManager
+                NetworkPrefabRef selectedPrefab = playerPrefabs[MenuManager.SelectedCharacterIndex];
 
-                Vector3 spawnPos = useRandomSpawn
-                    ? new Vector3(Random.Range(-5f, 5f), 1, Random.Range(-5f, 5f))
-                    : customSpawn;
+                // Lấy vị trí spawn cố định cho Lobby
+                Vector3 lobbySpawnPos = new Vector3(0, 1, 0);
+                Quaternion lobbySpawnRot = Quaternion.identity;
 
-                NetworkObject playerObj = runner.Spawn(playerPrefab, spawnPos, Quaternion.identity, player);
-                _spawnedPlayers.Add(player, playerObj);
+                // Spawn player prefab
+                NetworkObject playerObj = runner.Spawn(selectedPrefab, lobbySpawnPos, lobbySpawnRot, player);
+                runner.SetPlayerObject(player, playerObj);
+
+                _spawnedPlayers[player] = playerObj;
+
+                // Cập nhật thông tin người chơi trên mạng (tên và lựa chọn nhân vật)
+                PlayerNames.Add(player, MenuManager.PlayerName);
+                PlayerCharacterSelections.Add(player, MenuManager.SelectedCharacterIndex);
+
+                Debug.Log($">>> Spawned {playerObj.name} for {player}, HasInputAuthority={playerObj.HasInputAuthority}");
             }
         }
 
-        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+        public override void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
             if (_spawnedPlayers.TryGetValue(player, out var obj))
             {
@@ -79,50 +101,14 @@ namespace AvocadoShark
             }
         }
 
-        public void OnInput(NetworkRunner runner, NetworkInput input)
+        public override void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            // Gửi input từ bàn phím/chuột
             var data = new NetworkInputData();
-
-            data.direction.x = Input.GetAxis("Horizontal");
-            data.direction.z = Input.GetAxis("Vertical");
-
-            if (Input.GetKey(KeyCode.Space))
-                data.buttons |= NetworkInputData.JUMP;
-
+            data.horizontal = Input.GetAxisRaw("Horizontal");
+            data.vertical = Input.GetAxisRaw("Vertical");
+            data.jump = Input.GetKey(KeyCode.Space);
             input.Set(data);
         }
-
-        // Các hàm interface bắt buộc nhưng chưa dùng
-        public void OnConnectedToServer(NetworkRunner runner) { }
-        public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
-        public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
-        public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
-        public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
-        public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
-        public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, System.ArraySegment<byte> data) { }
-        public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) { }
-        public void OnSceneLoadStart(NetworkRunner runner) { }
-        public void OnSceneLoadDone(NetworkRunner runner) { }
-        public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
-        public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
-        public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
-        public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
-        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
-        public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
         #endregion
-    }
-
-    /// <summary>
-    /// Input data gửi qua mạng
-    /// </summary>
-    public struct NetworkInputData : INetworkInput
-    {
-        public const byte JUMP = 0x01;
-
-        public Vector3 direction;
-        public byte buttons;
-
-        public bool IsJumpPressed => (buttons & JUMP) != 0;
     }
 }

@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 3771106772615443133}
   - component: {fileID: 8975925487569722577}
   - component: {fileID: 3600188986877147542}
-  - component: {fileID: 7808056879663059538}
+  - component: {fileID: 8098074764000548681}
+  - component: {fileID: 4581027789917511833}
   m_Layer: 0
   m_Name: KnightPlayer
   m_TagString: Untagged
@@ -68,11 +69,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
   SortKey: 3906140044
   ObjectInterest: 1
-  Flags: 262145
+  Flags: 786433
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 3771106772615443133}
-  - {fileID: 7808056879663059538}
+  - {fileID: 8098074764000548681}
+  - {fileID: 4581027789917511833}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &3600188986877147542
 CharacterController:
@@ -95,11 +97,11 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.5
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &7808056879663059538
+--- !u!114 &8098074764000548681
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118,6 +120,21 @@ MonoBehaviour:
   braking: 10
   maxSpeed: 2
   rotationSpeed: 15
+--- !u!114 &4581027789917511833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7938256536985502668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb3ea5847bb69f4297cbf9d4e1beadd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerNetworkController
+  moveSpeed: 5
+  _InitialSpawnPosition: {x: 0, y: 0, z: 0}
+  _InitialSpawnRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1001 &5676105826978671525
 PrefabInstance:
   m_ObjectHideFlags: 0
