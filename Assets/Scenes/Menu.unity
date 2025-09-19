@@ -2695,7 +2695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &987491645
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4616,13 +4616,10 @@ MonoBehaviour:
   nameInputField: {fileID: 677148766}
   hostButton: {fileID: 1712220899}
   joinButton: {fileID: 217218592}
-  lobbyUI: {fileID: 1694293369}
-  menuUI: {fileID: 673941855}
-  readyButton: {fileID: 987491648}
-  leaveButton: {fileID: 869348487}
   startButton: {fileID: 805565424}
-  playerListContainer: {fileID: 837791792}
-  playerListPrefab: {fileID: 4701474346822060744, guid: a3a4b7de386d55c4491996d1538e1685, type: 3}
+  leaveButton: {fileID: 869348487}
+  menuUI: {fileID: 673941855}
+  lobbyUI: {fileID: 1694293369}
   characterNameText: {fileID: 1057393629}
   previousCharacterButton: {fileID: 348194657}
   nextCharacterButton: {fileID: 306816164}
