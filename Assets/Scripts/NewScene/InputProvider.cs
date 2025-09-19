@@ -13,5 +13,5 @@ public class InputProvider : NetworkRunnerCall
         input.Set(data);
     }
 
-    
+
 }

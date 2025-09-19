@@ -9,25 +9,21 @@ public class PlayerNetworkController : NetworkBehaviour
 
     [SerializeField] private float moveSpeed = 5f;
 
-    // Thêm các biến networked để lưu vị trí spawn ban đầu
     [Networked] public Vector3 InitialSpawnPosition { get; set; }
     [Networked] public Quaternion InitialSpawnRotation { get; set; }
+
+    [Networked] public NetworkString<_16> PlayerName { get; set; }
+    [Networked] public int CharacterIndex { get; set; }
 
     public override void Spawned()
     {
         _controller = GetComponent<NetworkCharacterController>();
 
+        // Debug: màu khác nhau giữa local & remote
         if (Object.HasInputAuthority)
             GetComponentInChildren<Renderer>().material.color = Color.blue;
         else
             GetComponentInChildren<Renderer>().material.color = Color.red;
-
-        // Kiểm tra nếu là player đầu tiên được spawn và có quyền input
-        // Cần đảm bảo rằng vị trí này được set bởi server
-        if (Object.HasStateAuthority)
-        {
-            // Trong trường hợp này, việc này sẽ được set trong NetworkGameManager
-        }
     }
 
     public override void FixedUpdateNetwork()
@@ -45,22 +41,22 @@ public class PlayerNetworkController : NetworkBehaviour
         }
     }
 
-    // Hàm này chỉ được gọi từ máy chủ (Server)
+    // Chỉ server mới được gọi
     public void SetInitialSpawnPoint(Vector3 position, Quaternion rotation)
     {
         if (Object.HasStateAuthority)
         {
             InitialSpawnPosition = position;
             InitialSpawnRotation = rotation;
-            transform.position = InitialSpawnPosition;
-            transform.rotation = InitialSpawnRotation;
+            transform.SetPositionAndRotation(InitialSpawnPosition, InitialSpawnRotation);
         }
     }
 
-    // Hàm hồi sinh (Respawn)
     public void Respawn()
     {
-        transform.position = InitialSpawnPosition;
-        transform.rotation = InitialSpawnRotation;
+        if (Object.HasStateAuthority)
+        {
+            transform.SetPositionAndRotation(InitialSpawnPosition, InitialSpawnRotation);
+        }
     }
 }
