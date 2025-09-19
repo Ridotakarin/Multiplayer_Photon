@@ -119,6 +119,67 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &90698114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 90698116}
+  - component: {fileID: 90698115}
+  - component: {fileID: 90698117}
+  m_Layer: 0
+  m_Name: NetworkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &90698115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90698114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f4f515c99ed1c94ab32d13df5f9449f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkGameManager
+  playerPrefabs:
+  - RawGuidValue: 87c718f2165c6284cbca711787ace985
+  - RawGuidValue: 5b9a2c60d59bf394cb0b19ae9691fe86
+  - RawGuidValue: 273dfa4dae916594591bd4e5c6b27223
+--- !u!4 &90698116
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90698114}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.52715, y: -0.5, z: -15.16467}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &90698117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90698114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17f1f76b1f7a94d40a72f9534bfd27ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputProvider
 --- !u!1 &181185306
 GameObject:
   m_ObjectHideFlags: 0
@@ -4592,7 +4653,6 @@ GameObject:
   - component: {fileID: 2060716636}
   - component: {fileID: 2060716639}
   - component: {fileID: 2060716638}
-  - component: {fileID: 2060716637}
   - component: {fileID: 2060716635}
   m_Layer: 0
   m_Name: MenuManager
@@ -4631,10 +4691,6 @@ MonoBehaviour:
   - Knight
   - Human
   - Red Knight
-  playerPrefabs:
-  - RawGuidValue: 87c718f2165c6284cbca711787ace985
-  - RawGuidValue: 5b9a2c60d59bf394cb0b19ae9691fe86
-  - RawGuidValue: 273dfa4dae916594591bd4e5c6b27223
   gameSceneBuildIndex: 1
 --- !u!4 &2060716636
 Transform:
@@ -4652,18 +4708,6 @@ Transform:
   - {fileID: 653694205}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2060716637
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2060716634}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17f1f76b1f7a94d40a72f9534bfd27ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputProvider
 --- !u!114 &2060716638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4699,3 +4743,4 @@ SceneRoots:
   - {fileID: 895426590}
   - {fileID: 2060716636}
   - {fileID: 1146959875}
+  - {fileID: 90698116}
