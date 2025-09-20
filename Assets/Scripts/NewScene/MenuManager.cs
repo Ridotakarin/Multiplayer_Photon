@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -80,6 +81,8 @@ public class MenuManager : MonoBehaviour
         bool ok = !string.IsNullOrEmpty(PlayerName);
         if (hostButton != null) hostButton.interactable = ok;
         if (joinButton != null) joinButton.interactable = ok;
+        if (startButton != null) startButton.interactable = ok;
+        if (leaveButton != null) leaveButton.interactable = ok;
     }
 
     private void OnPreviousCharacterClicked()
@@ -122,12 +125,16 @@ public class MenuManager : MonoBehaviour
         startButton?.gameObject.SetActive(true);
     }
 
-    private void OnJoinUIClicked()
+    private async void OnJoinUIClicked()
     {
-        isHost = false;
-        menuUI?.SetActive(false);
-        lobbyUI?.SetActive(true);
-        startButton?.gameObject.SetActive(false);
+        if (!isHost)
+        {
+            await NetworkGameManager.Instance.StartClient("Room1", gameSceneBuildIndex);
+        }
+        //isHost = false;
+        //menuUI?.SetActive(false);
+        //lobbyUI?.SetActive(true);
+        //startButton?.gameObject.SetActive(false);
     }
 
     private async System.Threading.Tasks.Task OnStartButtonClicked()

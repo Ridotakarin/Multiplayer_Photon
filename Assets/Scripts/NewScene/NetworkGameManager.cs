@@ -41,7 +41,7 @@ public class NetworkGameManager : NetworkRunnerCall
         if (Runner == null)
         {
             Runner = gameObject.AddComponent<NetworkRunner>();
-            Runner.ProvideInput = (mode == GameMode.Host);
+            Runner.ProvideInput = true;
         }
 
         if (!callbacksAdded)
