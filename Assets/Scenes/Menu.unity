@@ -5216,7 +5216,10 @@ MonoBehaviour:
   nameInputField: {fileID: 677148766}
   hostButton: {fileID: 1712220899}
   joinButton: {fileID: 217218592}
+  startButton: {fileID: 805565424}
+  leaveButton: {fileID: 869348487}
   menuUI: {fileID: 673941855}
+  lobbyUI: {fileID: 1694293369}
   characterNameText: {fileID: 1057393629}
   previousCharacterButton: {fileID: 348194657}
   nextCharacterButton: {fileID: 306816164}

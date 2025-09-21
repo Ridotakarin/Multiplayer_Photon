@@ -105,6 +105,8 @@ public class MenuManager : MonoBehaviour
         {
             for (int i = 0; i < characterDisplayObjects.Length; i++)
                 characterDisplayObjects[i].SetActive(i == SelectedCharacterIndex);
+            PlayerPrefs.SetInt("SelectedCharacterIndex", SelectedCharacterIndex);
+            Debug.Log($"SelectedCharacterIndex = {SelectedCharacterIndex}");
         }
 
         if (characterNameText != null)
@@ -120,6 +122,8 @@ public class MenuManager : MonoBehaviour
     private void OnHostUIClicked()
     {
         isHost = true;
+        PlayerPrefs.SetString("Host_PlayerName", PlayerName);
+        PlayerPrefs.SetInt("Host_CharacterIndex", SelectedCharacterIndex);
         menuUI?.SetActive(false);
         lobbyUI?.SetActive(true);
         startButton?.gameObject.SetActive(true);
@@ -129,22 +133,20 @@ public class MenuManager : MonoBehaviour
     {
         if (!isHost)
         {
+            PlayerPrefs.SetString("Client_PlayerName", PlayerName);
+            PlayerPrefs.SetInt("Client_CharacterIndex", SelectedCharacterIndex);
+            Debug.Log($"[Menu] Client_PlayerName={PlayerName}, Client_CharacterIndex={SelectedCharacterIndex}");
             await NetworkGameManager.Instance.StartClient("Room1", gameSceneBuildIndex);
         }
-        //isHost = false;
-        //menuUI?.SetActive(false);
-        //lobbyUI?.SetActive(true);
-        //startButton?.gameObject.SetActive(false);
     }
 
-    private async System.Threading.Tasks.Task OnStartButtonClicked()
+    private async Task OnStartButtonClicked()
     {
         if (!isHost) return;
 
         bool ok = await NetworkGameManager.Instance.StartHost("Room1", gameSceneBuildIndex);
         if (!ok)
         {
-            // revert UI nếu lỗi
             ShowMenu();
         }
     }

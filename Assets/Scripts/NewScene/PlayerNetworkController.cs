@@ -19,8 +19,22 @@ public class PlayerNetworkController : NetworkBehaviour
     {
         _controller = GetComponent<NetworkCharacterController>();
 
+        if (Object.HasInputAuthority)
+        {
+           
+
+            string nameKey = Runner.IsServer ? "Host_PlayerName" : "Client_PlayerName";
+            string idxKey = Runner.IsServer ? "Host_CharacterIndex" : "Client_CharacterIndex";
+
+            PlayerName = PlayerPrefs.GetString(nameKey, $"Player {Object.InputAuthority.PlayerId}");
+            CharacterIndex = PlayerPrefs.GetInt(idxKey, 0);
+
+            Rpc_PlayerConfig(CharacterIndex, PlayerName);
+        }
+
         Debug.Log($"[Spawned] Player {Object.InputAuthority} - Name={PlayerName}, CharIndex={CharacterIndex}");
 
+        // Màu sắc test trực quan
         if (Object.HasInputAuthority)
             GetComponentInChildren<Renderer>().material.color = Color.blue;
         else
@@ -42,19 +56,13 @@ public class PlayerNetworkController : NetworkBehaviour
         }
     }
 
-    // === RPCs để sync dữ liệu từ client lên StateAuthority ===
+    // === RPCs từ client báo về host ===
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void Rpc_SetCharacterIndex(int idx)
+    public void Rpc_PlayerConfig(int idx, string name)
     {
         CharacterIndex = idx;
-        Debug.Log($"[Server] Player {Object.InputAuthority.PlayerId} set CharIndex={idx}");
-    }
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void Rpc_SetPlayerName(string name)
-    {
         PlayerName = name;
-        Debug.Log($"[Server] Player {Object.InputAuthority.PlayerId} set Name={name}");
+        Debug.Log($"[Server] Player {Object.InputAuthority.PlayerId} set CharIndex={idx}  Name={name}");
     }
 
     // === Spawn & Respawn ===

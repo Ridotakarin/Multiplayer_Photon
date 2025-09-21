@@ -78,20 +78,31 @@ public class NetworkGameManager : NetworkRunnerCall
     {
         if (runner.IsServer && !runner.TryGetPlayerObject(player, out var playerObj))
         {
-            int idx = (player == runner.LocalPlayer) ? MenuManager.SelectedCharacterIndex : 0;
-            if (idx < 0 || idx >= playerPrefabs.Length) idx = 0;
+            int charIdx;
+            string playerName;
+
+            if (player == runner.LocalPlayer) // Đây là host
+            {
+                charIdx = PlayerPrefs.GetInt("Host_CharacterIndex", 0);
+                playerName = PlayerPrefs.GetString("Host_PlayerName", $"Host_{player.PlayerId}");
+            }
+            else // Đây là client join vào
+            {
+                charIdx = PlayerPrefs.GetInt("Client_CharacterIndex", 0);
+                playerName = PlayerPrefs.GetString("Client_PlayerName", $"Client_{player.PlayerId}");
+            }
 
             Vector3 pos = new Vector3(player.PlayerId * 2f, 0f, 0f);
-            playerObj = runner.Spawn(playerPrefabs[idx], pos, Quaternion.identity, player);
+            playerObj = runner.Spawn(playerPrefabs[charIdx], pos, Quaternion.identity, player);
 
             var ctrl = playerObj.GetComponent<PlayerNetworkController>();
             if (ctrl != null)
             {
-                ctrl.CharacterIndex = idx;
-                ctrl.PlayerName = (player == runner.LocalPlayer) ? MenuManager.PlayerName : $"Player {player.PlayerId}";
+                ctrl.CharacterIndex = charIdx;
+                ctrl.PlayerName = playerName;
             }
 
-            Debug.Log($"[NetworkGameManager] Spawn Player {player.PlayerId}, Name={ctrl.PlayerName}, CharIndex={ctrl.CharacterIndex}");
+            Debug.Log($"[NetworkGameManager] Spawn Player {player.PlayerId}, CharIdx={charIdx}, Name={playerName}");
         }
     }
 
