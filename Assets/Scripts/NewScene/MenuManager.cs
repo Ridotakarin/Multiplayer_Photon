@@ -1,5 +1,4 @@
 ﻿using Fusion;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,8 +11,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Button hostButton;
     [SerializeField] private Button joinButton;
-    [SerializeField] private Button startButton;
-    [SerializeField] private Button leaveButton;
+
     [SerializeField] private GameObject menuUI;
     [SerializeField] private GameObject lobbyUI;
 
@@ -53,13 +51,10 @@ public class MenuManager : MonoBehaviour
 
         hostButton?.onClick.AddListener(OnHostUIClicked);
         joinButton?.onClick.AddListener(OnJoinUIClicked);
-        startButton?.onClick.AddListener(() => _ = OnStartButtonClicked());
-        leaveButton?.onClick.AddListener(OnLeaveLobbyClicked);
 
         // UI mặc định
         lobbyUI?.SetActive(false);
         menuUI?.SetActive(true);
-        startButton?.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -81,8 +76,12 @@ public class MenuManager : MonoBehaviour
         bool ok = !string.IsNullOrEmpty(PlayerName);
         if (hostButton != null) hostButton.interactable = ok;
         if (joinButton != null) joinButton.interactable = ok;
-        if (startButton != null) startButton.interactable = ok;
-        if (leaveButton != null) leaveButton.interactable = ok;
+    }
+
+    private void DisableInteractivity()
+    {
+        if (hostButton != null) hostButton.interactable = false;
+        if (joinButton != null) joinButton.interactable = false;
     }
 
     private void OnPreviousCharacterClicked()
@@ -105,8 +104,10 @@ public class MenuManager : MonoBehaviour
         {
             for (int i = 0; i < characterDisplayObjects.Length; i++)
                 characterDisplayObjects[i].SetActive(i == SelectedCharacterIndex);
+
+            // Lưu lại lựa chọn để PlayerNetworkController đọc
             PlayerPrefs.SetInt("SelectedCharacterIndex", SelectedCharacterIndex);
-            Debug.Log($"SelectedCharacterIndex = {SelectedCharacterIndex}");
+            Debug.Log($"[Menu] SelectedCharacterIndex = {SelectedCharacterIndex}");
         }
 
         if (characterNameText != null)
@@ -119,50 +120,35 @@ public class MenuManager : MonoBehaviour
     #endregion
 
     #region Lobby Flow
-    private void OnHostUIClicked()
+    private async void OnHostUIClicked()
     {
         isHost = true;
-        PlayerPrefs.SetString("Host_PlayerName", PlayerName);
-        PlayerPrefs.SetInt("Host_CharacterIndex", SelectedCharacterIndex);
-        menuUI?.SetActive(false);
-        lobbyUI?.SetActive(true);
-        startButton?.gameObject.SetActive(true);
+        SavePlayerPrefs();
+
+        Debug.Log($"[Menu] Host_PlayerName={PlayerName}, CharacterIndex={SelectedCharacterIndex}");
+        DisableInteractivity();
+
+        await NetworkGameManager.Instance.StartHost("Room1", gameSceneBuildIndex);
     }
 
     private async void OnJoinUIClicked()
     {
         if (!isHost)
         {
-            PlayerPrefs.SetString("Client_PlayerName", PlayerName);
-            PlayerPrefs.SetInt("Client_CharacterIndex", SelectedCharacterIndex);
-            Debug.Log($"[Menu] Client_PlayerName={PlayerName}, Client_CharacterIndex={SelectedCharacterIndex}");
+            SavePlayerPrefs();
+
+            Debug.Log($"[Menu] Client_PlayerName={PlayerName}, CharacterIndex={SelectedCharacterIndex}");
+            DisableInteractivity();
+
             await NetworkGameManager.Instance.StartClient("Room1", gameSceneBuildIndex);
         }
     }
 
-    private async Task OnStartButtonClicked()
+    private void SavePlayerPrefs()
     {
-        if (!isHost) return;
-
-        bool ok = await NetworkGameManager.Instance.StartHost("Room1", gameSceneBuildIndex);
-        if (!ok)
-        {
-            ShowMenu();
-        }
-    }
-
-    private void OnLeaveLobbyClicked()
-    {
-        lobbyUI?.SetActive(false);
-        menuUI?.SetActive(true);
-        isHost = false;
-    }
-
-    private void ShowMenu()
-    {
-        lobbyUI?.SetActive(false);
-        menuUI?.SetActive(true);
-        startButton?.gameObject.SetActive(false);
+        PlayerPrefs.SetString("PlayerName", PlayerName);
+        PlayerPrefs.SetInt("SelectedCharacterIndex", SelectedCharacterIndex);
+        PlayerPrefs.Save();
     }
     #endregion
 }

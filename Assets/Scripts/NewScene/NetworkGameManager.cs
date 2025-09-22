@@ -78,33 +78,37 @@ public class NetworkGameManager : NetworkRunnerCall
     {
         if (runner.IsServer && !runner.TryGetPlayerObject(player, out var playerObj))
         {
-            int charIdx;
-            string playerName;
-
-            if (player == runner.LocalPlayer) // Đây là host
-            {
-                charIdx = PlayerPrefs.GetInt("Host_CharacterIndex", 0);
-                playerName = PlayerPrefs.GetString("Host_PlayerName", $"Host_{player.PlayerId}");
-            }
-            else // Đây là client join vào
-            {
-                charIdx = PlayerPrefs.GetInt("Client_CharacterIndex", 0);
-                playerName = PlayerPrefs.GetString("Client_PlayerName", $"Client_{player.PlayerId}");
-            }
-
             Vector3 pos = new Vector3(player.PlayerId * 2f, 0f, 0f);
-            playerObj = runner.Spawn(playerPrefabs[charIdx], pos, Quaternion.identity, player);
 
-            var ctrl = playerObj.GetComponent<PlayerNetworkController>();
-            if (ctrl != null)
+            if (player == runner.LocalPlayer)
             {
-                ctrl.CharacterIndex = charIdx;
-                ctrl.PlayerName = playerName;
-            }
+                // Host spawn chính mình ngay với prefab đúng
+                int idx = PlayerPrefs.GetInt("CharacterIndex", 0);
+                string name = PlayerPrefs.GetString("PlayerName", $"Player {player.PlayerId}");
 
-            Debug.Log($"[NetworkGameManager] Spawn Player {player.PlayerId}, CharIdx={charIdx}, Name={playerName}");
+                playerObj = runner.Spawn(playerPrefabs[idx], pos, Quaternion.identity, player);
+                runner.SetPlayerObject(player, playerObj);
+
+                var ctrl = playerObj.GetComponent<PlayerNetworkController>();
+                if (ctrl != null)
+                {
+                    ctrl.CharacterIndex = idx;
+                    ctrl.PlayerName = name;
+                }
+
+                Debug.Log($"[NetworkGameManager] Host spawn chính mình Player {player.PlayerId}, CharIndex={idx}, Name={name}");
+            }
+            else
+            {
+                // Client spawn tạm prefab mặc định
+                playerObj = runner.Spawn(playerPrefabs[0], pos, Quaternion.identity, player);
+                runner.SetPlayerObject(player, playerObj);
+
+                Debug.Log($"[NetworkGameManager] Spawn tạm cho Client {player.PlayerId}, chờ RPC config");
+            }
         }
     }
+
 
     public override void OnSceneLoadDone(NetworkRunner runner)
     {

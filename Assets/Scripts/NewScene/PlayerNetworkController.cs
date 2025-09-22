@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerNetworkController : NetworkBehaviour
 {
     private NetworkCharacterController _controller;
-
     [SerializeField] private float moveSpeed = 5f;
 
     [Networked] public Vector3 InitialSpawnPosition { get; set; }
@@ -14,27 +13,27 @@ public class PlayerNetworkController : NetworkBehaviour
 
     [Networked] public string PlayerName { get; set; }
     [Networked] public int CharacterIndex { get; set; }
+    [Networked] private NetworkBool IsConfigured { get; set; }
+
+    [SerializeField] private GameObject[] characterModels;
 
     public override void Spawned()
     {
         _controller = GetComponent<NetworkCharacterController>();
 
-        if (Object.HasInputAuthority)
+        if (Object.HasInputAuthority && !Object.HasStateAuthority)
         {
-           
+            // chỉ client mới cần gửi RPC lên host
+            string defaultName = $"Player {Object.InputAuthority.PlayerId}";
+            string name = PlayerPrefs.GetString("PlayerName", defaultName);
+            int idx = PlayerPrefs.GetInt("SelectedCharacterIndex", 0);
 
-            string nameKey = Runner.IsServer ? "Host_PlayerName" : "Client_PlayerName";
-            string idxKey = Runner.IsServer ? "Host_CharacterIndex" : "Client_CharacterIndex";
-
-            PlayerName = PlayerPrefs.GetString(nameKey, $"Player {Object.InputAuthority.PlayerId}");
-            CharacterIndex = PlayerPrefs.GetInt(idxKey, 0);
-
-            Rpc_PlayerConfig(CharacterIndex, PlayerName);
+            Rpc_RequestRespawn(idx, name);
         }
 
         Debug.Log($"[Spawned] Player {Object.InputAuthority} - Name={PlayerName}, CharIndex={CharacterIndex}");
 
-        // Màu sắc test trực quan
+        // Test màu để phân biệt local vs remote
         if (Object.HasInputAuthority)
             GetComponentInChildren<Renderer>().material.color = Color.blue;
         else
@@ -56,13 +55,39 @@ public class PlayerNetworkController : NetworkBehaviour
         }
     }
 
-    // === RPCs từ client báo về host ===
+    // === RPC client -> host ===
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void Rpc_PlayerConfig(int idx, string name)
+    public void Rpc_RequestRespawn(int idx, string name)
     {
-        CharacterIndex = idx;
-        PlayerName = name;
-        Debug.Log($"[Server] Player {Object.InputAuthority.PlayerId} set CharIndex={idx}  Name={name}");
+        if (!Runner.IsServer) return;
+
+        var oldObj = Object;
+        var pos = oldObj.transform.position;
+        var rot = oldObj.transform.rotation;
+
+        // Chỉ respawn nếu đây là placeholder (vd CharacterIndex = 0 mặc định)
+        if (CharacterIndex != idx || string.IsNullOrEmpty(PlayerName))
+        {
+            var newObj = Runner.Spawn(
+                NetworkGameManager.Instance.playerPrefabs[idx],
+                pos, rot, Object.InputAuthority
+            );
+
+            var ctrl = newObj.GetComponent<PlayerNetworkController>();
+            ctrl.CharacterIndex = idx;
+            ctrl.PlayerName = name;
+            ctrl.IsConfigured = true;
+
+            Runner.SetPlayerObject(Object.InputAuthority, newObj);
+            Runner.Despawn(oldObj);
+        }
+        else
+        {
+            // Nếu đã đúng prefab rồi thì chỉ set dữ liệu
+            CharacterIndex = idx;
+            PlayerName = name;
+            IsConfigured = true;
+        }
     }
 
     // === Spawn & Respawn ===

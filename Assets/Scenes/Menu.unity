@@ -4253,6 +4253,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4581027789917511833, guid: 87c718f2165c6284cbca711787ace985, type: 3}
+      propertyPath: characterModels.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4581027789917511833, guid: 87c718f2165c6284cbca711787ace985, type: 3}
+      propertyPath: 'characterModels.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7938256536985502668, guid: 87c718f2165c6284cbca711787ace985, type: 3}
+    - target: {fileID: 4581027789917511833, guid: 87c718f2165c6284cbca711787ace985, type: 3}
+      propertyPath: 'characterModels.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1143980658513612196, guid: 5b9a2c60d59bf394cb0b19ae9691fe86, type: 3}
+    - target: {fileID: 4581027789917511833, guid: 87c718f2165c6284cbca711787ace985, type: 3}
+      propertyPath: 'characterModels.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1143980658513612196, guid: 273dfa4dae916594591bd4e5c6b27223, type: 3}
     - target: {fileID: 7938256536985502668, guid: 87c718f2165c6284cbca711787ace985, type: 3}
       propertyPath: m_Name
       value: KnightPlayer
@@ -5216,8 +5232,6 @@ MonoBehaviour:
   nameInputField: {fileID: 677148766}
   hostButton: {fileID: 1712220899}
   joinButton: {fileID: 217218592}
-  startButton: {fileID: 805565424}
-  leaveButton: {fileID: 869348487}
   menuUI: {fileID: 673941855}
   lobbyUI: {fileID: 1694293369}
   characterNameText: {fileID: 1057393629}
