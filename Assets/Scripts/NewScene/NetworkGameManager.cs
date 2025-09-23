@@ -2,12 +2,17 @@
 using UnityEngine;
 using Fusion;
 
+
+
 public class NetworkGameManager : NetworkRunnerCall
 {
     public static NetworkGameManager Instance { get; private set; }
 
     [Header("Network Prefabs (index matches SelectedCharacterIndex)")]
     public NetworkPrefabRef[] playerPrefabs;
+
+    [Header("Spawn points for game scene")]
+    public Transform[] SpawnPoints; // set 4 child spawn points trong inspector
 
     public NetworkRunner Runner { get; private set; }
     public bool IsHost { get; private set; }
@@ -25,6 +30,8 @@ public class NetworkGameManager : NetworkRunnerCall
             Destroy(gameObject);
         }
     }
+
+    
 
     public async Task<bool> StartHost(string sessionName, int sceneIndex)
     {
@@ -83,7 +90,7 @@ public class NetworkGameManager : NetworkRunnerCall
             if (player == runner.LocalPlayer)
             {
                 // Host spawn chính mình ngay với prefab đúng
-                int idx = PlayerPrefs.GetInt("CharacterIndex", 0);
+                int idx = PlayerPrefs.GetInt("SelectedCharacterIndex", 0);
                 string name = PlayerPrefs.GetString("PlayerName", $"Player {player.PlayerId}");
 
                 playerObj = runner.Spawn(playerPrefabs[idx], pos, Quaternion.identity, player);
@@ -97,6 +104,10 @@ public class NetworkGameManager : NetworkRunnerCall
                 }
 
                 Debug.Log($"[NetworkGameManager] Host spawn chính mình Player {player.PlayerId}, CharIndex={idx}, Name={name}");
+                Debug.Log($"Player {player.PlayerId} joined");
+                
+
+
             }
             else
             {
@@ -105,10 +116,27 @@ public class NetworkGameManager : NetworkRunnerCall
                 runner.SetPlayerObject(player, playerObj);
 
                 Debug.Log($"[NetworkGameManager] Spawn tạm cho Client {player.PlayerId}, chờ RPC config");
+                Debug.Log($"Player {player.PlayerId} joined");
+
+                
             }
         }
     }
+    public override void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    {
+        Debug.Log($"Player {player.PlayerId} left");
 
+        // tìm tất cả PlayerNetworkController thuộc playerRef đó
+        foreach (var p in FindObjectsOfType<PlayerNetworkController>())
+        {
+            if (p.Object.InputAuthority == player)
+            {
+                runner.Despawn(p.Object);
+            }
+        }
+
+        
+    }
 
     public override void OnSceneLoadDone(NetworkRunner runner)
     {

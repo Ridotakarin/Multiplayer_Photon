@@ -1,4 +1,9 @@
 ﻿using Fusion;
+using System.Collections;
+using TMPro;
+using Unity.AppUI.Core;
+using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(NetworkObject))]
@@ -7,6 +12,10 @@ public class PlayerNetworkController : NetworkBehaviour
 {
     private NetworkCharacterController _controller;
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private GameObject canvas;
+    [SerializeField] private TMP_Text playerNameText;
+    [SerializeField] private CinemachineCamera vCam;
+
 
     [Networked] public Vector3 InitialSpawnPosition { get; set; }
     [Networked] public Quaternion InitialSpawnRotation { get; set; }
@@ -17,29 +26,44 @@ public class PlayerNetworkController : NetworkBehaviour
 
     [SerializeField] private GameObject[] characterModels;
 
+    public bool isReady;
+
     public override void Spawned()
     {
         _controller = GetComponent<NetworkCharacterController>();
-
+        canvas.SetActive(true);
         if (Object.HasInputAuthority && !Object.HasStateAuthority)
         {
             // chỉ client mới cần gửi RPC lên host
             string defaultName = $"Player {Object.InputAuthority.PlayerId}";
             string name = PlayerPrefs.GetString("PlayerName", defaultName);
             int idx = PlayerPrefs.GetInt("SelectedCharacterIndex", 0);
-
             Rpc_RequestRespawn(idx, name);
+            Runner.GetComponent<InputProvider>().LocalPlayer = this;
+
+
         }
 
         Debug.Log($"[Spawned] Player {Object.InputAuthority} - Name={PlayerName}, CharIndex={CharacterIndex}");
 
         // Test màu để phân biệt local vs remote
         if (Object.HasInputAuthority)
+        {
             GetComponentInChildren<Renderer>().material.color = Color.blue;
+            vCam.enabled = true;
+        }
         else
+        {
             GetComponentInChildren<Renderer>().material.color = Color.red;
+            vCam.enabled = false;
+        }
     }
 
+    public override void Render()
+    {
+        if (playerNameText != null)
+            playerNameText.text = PlayerName;
+    }
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData input))
@@ -52,6 +76,10 @@ public class PlayerNetworkController : NetworkBehaviour
 
             if (input.jump)
                 _controller.Jump();
+            if (input.ready && !isReady)
+            {
+                RPC_Ready();
+            }
         }
     }
 
@@ -59,7 +87,9 @@ public class PlayerNetworkController : NetworkBehaviour
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void Rpc_RequestRespawn(int idx, string name)
     {
+
         if (!Runner.IsServer) return;
+
 
         var oldObj = Object;
         var pos = oldObj.transform.position;
@@ -83,10 +113,18 @@ public class PlayerNetworkController : NetworkBehaviour
         }
         else
         {
-            // Nếu đã đúng prefab rồi thì chỉ set dữ liệu
             CharacterIndex = idx;
             PlayerName = name;
             IsConfigured = true;
+        }
+    }
+    [Rpc(RpcSources.InputAuthority,RpcTargets.InputAuthority | RpcTargets.StateAuthority)]
+    public void RPC_Ready()
+    {
+        isReady = true;
+        if(HasInputAuthority)
+        {
+            //UIManager.Singelton.DidSetReady();
         }
     }
 
