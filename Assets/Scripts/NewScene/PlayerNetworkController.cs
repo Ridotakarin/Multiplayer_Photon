@@ -15,6 +15,7 @@ public class PlayerNetworkController : NetworkBehaviour
     [SerializeField] private GameObject canvas;
     [SerializeField] private TMP_Text playerNameText;
     [SerializeField] private CinemachineCamera vCam;
+    [SerializeField] private Animator animator;
 
 
     [Networked] public Vector3 InitialSpawnPosition { get; set; }
@@ -68,17 +69,30 @@ public class PlayerNetworkController : NetworkBehaviour
     {
         if (GetInput(out NetworkInputData input))
         {
-            Vector3 move = new Vector3(input.horizontal, 0, input.vertical);
-            _controller.Move(move.normalized * moveSpeed);
+            Vector3 forward = vCam.transform.forward;
+            forward.y = 0; // bỏ pitch
+            forward.Normalize();
 
-            if (move != Vector3.zero)
-                transform.forward = move.normalized;
+            Vector3 right = vCam.transform.right;
+            right.y = 0;
+            right.Normalize();
+
+            Vector3 moveDir = forward * input.vertical + right * input.horizontal;
+            _controller.Move(moveDir.normalized * moveSpeed);
+
+            // Update animation
+            bool isRunning = moveDir.sqrMagnitude > 0.01f;
+            animator.SetBool("IsRunning", isRunning);
 
             if (input.jump)
                 _controller.Jump();
             if (input.ready && !isReady)
             {
                 RPC_Ready();
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                RPC_Attack(); // gọi RPC để tất cả cùng thấy
             }
         }
     }
@@ -126,6 +140,11 @@ public class PlayerNetworkController : NetworkBehaviour
         {
             //UIManager.Singelton.DidSetReady();
         }
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    public void RPC_Attack()
+    {
+        animator.SetTrigger("Attack");
     }
 
     // === Spawn & Respawn ===

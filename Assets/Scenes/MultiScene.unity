@@ -1248,6 +1248,7 @@ GameObject:
   - component: {fileID: 1490332134}
   - component: {fileID: 1490332133}
   - component: {fileID: 1490332139}
+  - component: {fileID: 1490332140}
   m_Layer: 0
   m_Name: GameLogic
   m_TagString: Untagged
@@ -1399,6 +1400,18 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 1490332133}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &1490332140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1490332131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a81fab4b5f6b6fc45820eb2a4888139e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CursorManager
 --- !u!1001 &1656755312
 PrefabInstance:
   m_ObjectHideFlags: 0

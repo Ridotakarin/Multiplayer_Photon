@@ -462,13 +462,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5673215610608889754}
-  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6897370631287938089}
-  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -0.0027999878, y: 0}
@@ -712,6 +712,7 @@ MonoBehaviour:
   canvas: {fileID: 205494196896419198}
   playerNameText: {fileID: 5607915402413640558}
   vCam: {fileID: 8656592582930335015}
+  animator: {fileID: 8064095949926949581}
   _InitialSpawnPosition: {x: 0, y: 0, z: 0}
   _InitialSpawnRotation: {x: 0, y: 0, z: 0, w: 0}
   _PlayerName: 
