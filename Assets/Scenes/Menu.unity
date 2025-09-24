@@ -301,6 +301,7 @@ MonoBehaviour:
   - RawGuidValue: 5b9a2c60d59bf394cb0b19ae9691fe86
   - RawGuidValue: 273dfa4dae916594591bd4e5c6b27223
   SpawnPoints: []
+  runnerPrefab: {fileID: 5311351108328766813, guid: 0456e6ec2946ea94a963c9fe2e208432, type: 3}
 --- !u!4 &90698116
 Transform:
   m_ObjectHideFlags: 0

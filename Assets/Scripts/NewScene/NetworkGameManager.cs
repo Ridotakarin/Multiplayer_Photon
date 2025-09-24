@@ -14,6 +14,8 @@ public class NetworkGameManager : NetworkRunnerCall
     [Header("Spawn points for game scene")]
     public Transform[] SpawnPoints; // set 4 child spawn points trong inspector
 
+    [Header("Runner")]
+    [SerializeField] private GameObject runnerPrefab; // prefab chứa NetworkRunner
     public NetworkRunner Runner { get; private set; }
     public bool IsHost { get; private set; }
     private bool callbacksAdded;
@@ -45,11 +47,20 @@ public class NetworkGameManager : NetworkRunnerCall
 
     private async Task<bool> StartRunner(GameMode mode, string sessionName, int sceneIndex)
     {
-        if (Runner == null)
+        // Nếu đã có runner cũ, shutdown trước
+        if (Runner != null)
         {
-            Runner = gameObject.AddComponent<NetworkRunner>();
-            Runner.ProvideInput = true;
+            await Runner.Shutdown();
+            Destroy(Runner.gameObject);
+            Runner = null;
+            callbacksAdded = false;
+            IsHost = false;
         }
+
+        // Instantiate runner prefab mới
+        GameObject runnerObj = Instantiate(runnerPrefab); // runnerPrefab là prefab NetworkRunner
+        Runner = runnerObj.GetComponent<NetworkRunner>();
+        Runner.ProvideInput = true;
 
         if (!callbacksAdded)
         {
@@ -69,17 +80,27 @@ public class NetworkGameManager : NetworkRunnerCall
         if (!result.Ok)
         {
             Debug.LogError($"StartRunner failed: {result.ShutdownReason}");
-            await Runner.Shutdown();
-            Destroy(Runner);
+
+            // shutdown runner vừa tạo
+            if (Runner != null)
+            {
+                await Runner.Shutdown();
+                Destroy(Runner.gameObject);
+            }
+
             Runner = null;
             callbacksAdded = false;
+            IsHost = false;
+
+            // show menu UI cho client retry
+            //UIManager.Instance.ShowMainMenu();
+
             return false;
         }
 
         IsHost = (mode == GameMode.Host);
         return true;
     }
-
     #region Fusion Callbacks
     public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {

@@ -138,7 +138,6 @@ public class MenuManager : MonoBehaviour
             SavePlayerPrefs();
 
             Debug.Log($"[Menu] Client_PlayerName={PlayerName}, CharacterIndex={SelectedCharacterIndex}");
-            DisableInteractivity();
 
             await NetworkGameManager.Instance.StartClient("Room1", gameSceneBuildIndex);
         }
