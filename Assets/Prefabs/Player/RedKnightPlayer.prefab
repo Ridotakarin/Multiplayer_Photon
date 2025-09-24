@@ -171,6 +171,10 @@ PrefabInstance:
       propertyPath: Animator
       value: 
       objectReference: {fileID: 7489938109266480825}
+    - target: {fileID: 4581027789917511833, guid: 87c718f2165c6284cbca711787ace985, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 7489938109266480825}
     - target: {fileID: 7938256536985502668, guid: 87c718f2165c6284cbca711787ace985, type: 3}
       propertyPath: m_Name
       value: RedKnightPlayer

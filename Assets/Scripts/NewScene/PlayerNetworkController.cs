@@ -69,20 +69,11 @@ public class PlayerNetworkController : NetworkBehaviour
     {
         if (GetInput(out NetworkInputData input))
         {
-            Vector3 forward = vCam.transform.forward;
-            forward.y = 0; // bỏ pitch
-            forward.Normalize();
-
-            Vector3 right = vCam.transform.right;
-            right.y = 0;
-            right.Normalize();
-
-            Vector3 moveDir = forward * input.vertical + right * input.horizontal;
-            _controller.Move(moveDir.normalized * moveSpeed);
-
-            // Update animation
-            bool isRunning = moveDir.sqrMagnitude > 0.01f;
-            animator.SetBool("IsRunning", isRunning);
+            Vector3 move = new Vector3(input.moveDir.x, 0, input.moveDir.y);
+            _controller.Move(move.normalized * moveSpeed);
+            animator.SetBool("IsRunning", move.sqrMagnitude > 0.01f);
+            if (move != Vector3.zero)
+                transform.forward = move.normalized;
 
             if (input.jump)
                 _controller.Jump();
@@ -90,11 +81,27 @@ public class PlayerNetworkController : NetworkBehaviour
             {
                 RPC_Ready();
             }
-            if (Input.GetMouseButtonDown(0))
+            if (input.attack && CanAttack())
             {
-                RPC_Attack(); // gọi RPC để tất cả cùng thấy
+                if (Object.HasInputAuthority && !Object.HasStateAuthority)
+                {
+                    // Client: gửi RPC lên host
+                    Debug.Log($"Client {Object.InputAuthority} gửi request Attack");
+                    RPC_Attack();
+                }
+                else if (Object.HasStateAuthority)
+                {
+                    // Host: thực thi thật sự
+                    Debug.Log($"Host xử lý Attack cho Player {Object.InputAuthority}");
+                    animator.SetTrigger("Attack");
+                }
             }
         }
+    }
+    private bool CanAttack()
+    {
+        var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        return !stateInfo.IsName("Attack");
     }
 
     // === RPC client -> host ===
@@ -141,6 +148,7 @@ public class PlayerNetworkController : NetworkBehaviour
             //UIManager.Singelton.DidSetReady();
         }
     }
+
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     public void RPC_Attack()
     {
