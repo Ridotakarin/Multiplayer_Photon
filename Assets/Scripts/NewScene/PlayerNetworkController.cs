@@ -83,19 +83,20 @@ public class PlayerNetworkController : NetworkBehaviour
             }
             if (input.attack && CanAttack())
             {
-                if (Object.HasInputAuthority && !Object.HasStateAuthority)
+                if (Object.HasInputAuthority)
                 {
-                    // Client: gửi RPC lên host
-                    Debug.Log($"Client {Object.InputAuthority} gửi request Attack");
+                    // Broadcast animation cho tất cả client + host
                     RPC_Attack();
-                }
-                else if (Object.HasStateAuthority)
-                {
-                    // Host: thực thi thật sự
-                    Debug.Log($"Host xử lý Attack cho Player {Object.InputAuthority}");
-                    animator.SetTrigger("Attack");
+
+                    // Chỉ host xử lý logic (damage, cooldown, v.v.)
+                    if (Object.HasStateAuthority)
+                    {
+                        ProcessAttack();
+                    }
+
                 }
             }
+
         }
     }
     private bool CanAttack()
@@ -103,9 +104,14 @@ public class PlayerNetworkController : NetworkBehaviour
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         return !stateInfo.IsName("Attack");
     }
+    private void ProcessAttack()
+    {
+        // Xử lý logic tấn công
+        animator.SetTrigger("Attack");
+    }
 
-    // === RPC client -> host ===
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        // === RPC client -> host ===
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void Rpc_RequestRespawn(int idx, string name)
     {
 
