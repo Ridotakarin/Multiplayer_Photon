@@ -12,7 +12,7 @@ public class CursorManager : MonoBehaviour
     void Update()
     {
         // Lock curor on left mouse click
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(1))
         {
             LockCursor();
         }

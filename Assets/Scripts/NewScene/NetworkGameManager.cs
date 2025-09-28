@@ -2,8 +2,6 @@
 using UnityEngine;
 using Fusion;
 
-
-
 public class NetworkGameManager : NetworkRunnerCall
 {
     public static NetworkGameManager Instance { get; private set; }
@@ -33,8 +31,7 @@ public class NetworkGameManager : NetworkRunnerCall
         }
     }
 
-    
-
+    #region Start Runner
     public async Task<bool> StartHost(string sessionName, int sceneIndex)
     {
         return await StartRunner(GameMode.Host, sessionName, sceneIndex);
@@ -58,7 +55,7 @@ public class NetworkGameManager : NetworkRunnerCall
         }
 
         // Instantiate runner prefab mới
-        GameObject runnerObj = Instantiate(runnerPrefab); // runnerPrefab là prefab NetworkRunner
+        GameObject runnerObj = Instantiate(runnerPrefab);
         Runner = runnerObj.GetComponent<NetworkRunner>();
         Runner.ProvideInput = true;
 
@@ -81,7 +78,6 @@ public class NetworkGameManager : NetworkRunnerCall
         {
             Debug.LogError($"StartRunner failed: {result.ShutdownReason}");
 
-            // shutdown runner vừa tạo
             if (Runner != null)
             {
                 await Runner.Shutdown();
@@ -92,15 +88,16 @@ public class NetworkGameManager : NetworkRunnerCall
             callbacksAdded = false;
             IsHost = false;
 
-            // show menu UI cho client retry
-            //UIManager.Instance.ShowMainMenu();
-
+            //// Trở lại menu
+            //UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
             return false;
         }
 
         IsHost = (mode == GameMode.Host);
         return true;
     }
+    #endregion
+
     #region Fusion Callbacks
     public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
@@ -110,7 +107,6 @@ public class NetworkGameManager : NetworkRunnerCall
 
             if (player == runner.LocalPlayer)
             {
-                // Host spawn chính mình ngay với prefab đúng
                 int idx = PlayerPrefs.GetInt("SelectedCharacterIndex", 0);
                 string name = PlayerPrefs.GetString("PlayerName", $"Player {player.PlayerId}");
 
@@ -125,29 +121,36 @@ public class NetworkGameManager : NetworkRunnerCall
                 }
 
                 Debug.Log($"[NetworkGameManager] Host spawn chính mình Player {player.PlayerId}, CharIndex={idx}, Name={name}");
-                Debug.Log($"Player {player.PlayerId} joined");
-                
-
-
             }
             else
             {
-                // Client spawn tạm prefab mặc định
                 playerObj = runner.Spawn(playerPrefabs[0], pos, Quaternion.identity, player);
                 runner.SetPlayerObject(player, playerObj);
 
                 Debug.Log($"[NetworkGameManager] Spawn tạm cho Client {player.PlayerId}, chờ RPC config");
-                Debug.Log($"Player {player.PlayerId} joined");
+            }
 
-                
+            Debug.Log($"Player {player.PlayerId} joined");
+
+            // Gọi sang GameLogic (nếu có trong scene)
+            var gameLogic = FindObjectOfType<GameLogic>();
+            Debug.Log($"GameLogic: get {gameLogic}");
+            if (gameLogic != null && playerObj != null)
+            {
+                var ctrl = playerObj.GetComponent<PlayerNetworkController>();
+                if (ctrl != null)
+                {
+                    gameLogic.OnPlayerJoined(ctrl);
+                }
             }
         }
     }
+
+
     public override void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log($"Player {player.PlayerId} left");
 
-        // tìm tất cả PlayerNetworkController thuộc playerRef đó
         foreach (var p in FindObjectsOfType<PlayerNetworkController>())
         {
             if (p.Object.InputAuthority == player)
@@ -156,12 +159,43 @@ public class NetworkGameManager : NetworkRunnerCall
             }
         }
 
-        
+        // Nếu host rời => shutdown room
+        if (runner.IsServer && player == runner.LocalPlayer)
+        {
+            Debug.Log("Host left -> shutting down room...");
+            runner.Shutdown();
+        }
+    }
+
+    public override void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+    {
+        Debug.Log($"Runner shutdown: {shutdownReason}");
+        Runner = null;
+        IsHost = false;
+        Instance = null;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        // Đưa tất cả về menu
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
     }
 
     public override void OnSceneLoadDone(NetworkRunner runner)
     {
         Debug.Log("[NetworkGameManager] Scene loaded, player objects migrated.");
+    }
+    #endregion
+
+    #region Quit Application
+    private async void OnApplicationQuit()
+    {
+        if (Runner != null)
+        {
+            Debug.Log("[NetworkGameManager] Application quitting → shutting down Runner...");
+            await Runner.Shutdown();
+            Runner = null;
+            IsHost = false;
+            Instance = null;
+        }
     }
     #endregion
 }

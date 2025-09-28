@@ -10,7 +10,7 @@ public abstract class NetworkRunnerCall : MonoBehaviour, INetworkRunnerCallbacks
     public virtual void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
     public virtual void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
     public virtual void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
-    public virtual void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
+    public virtual void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) {  }
     public virtual void OnSessionListUpdated(NetworkRunner runner, System.Collections.Generic.List<SessionInfo> sessionList) { }
     public virtual void OnCustomAuthenticationResponse(NetworkRunner runner, System.Collections.Generic.Dictionary<string, object> data) { }
     public virtual void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }

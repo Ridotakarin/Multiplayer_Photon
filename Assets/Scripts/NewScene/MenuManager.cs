@@ -13,7 +13,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private Button joinButton;
 
     [SerializeField] private GameObject menuUI;
-    [SerializeField] private GameObject lobbyUI;
+    //[SerializeField] private GameObject lobbyUI;
 
     [Header("Character Selection UI")]
     [SerializeField] private TMP_Text characterNameText;
@@ -33,16 +33,8 @@ public class MenuManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
 
         // UI listeners
         nameInputField?.onValueChanged.AddListener(OnNameInputChanged);
@@ -53,7 +45,7 @@ public class MenuManager : MonoBehaviour
         joinButton?.onClick.AddListener(OnJoinUIClicked);
 
         // UI mặc định
-        lobbyUI?.SetActive(false);
+        //lobbyUI?.SetActive(false);
         menuUI?.SetActive(true);
     }
 

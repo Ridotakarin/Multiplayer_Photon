@@ -16,6 +16,8 @@ public class PlayerNetworkController : NetworkBehaviour
     [SerializeField] private TMP_Text playerNameText;
     [SerializeField] private CinemachineCamera vCam;
     [SerializeField] private Animator animator;
+    [SerializeField] private NetworkPrefabRef projectilePrefab;
+    [SerializeField] private Transform firePoint;
 
 
     [Networked] public Vector3 InitialSpawnPosition { get; set; }
@@ -24,6 +26,7 @@ public class PlayerNetworkController : NetworkBehaviour
     [Networked] public string PlayerName { get; set; }
     [Networked] public int CharacterIndex { get; set; }
     [Networked] private NetworkBool IsConfigured { get; set; }
+    public bool RequestProjectile { get; set; }
 
     [SerializeField] private GameObject[] characterModels;
 
@@ -96,6 +99,11 @@ public class PlayerNetworkController : NetworkBehaviour
 
                 }
             }
+            if (Object.HasInputAuthority && RequestProjectile)
+            {
+                RequestProjectile = false;
+                RPC_RequestSpawnProjectile();
+            }
 
         }
     }
@@ -109,9 +117,11 @@ public class PlayerNetworkController : NetworkBehaviour
         // Xử lý logic tấn công
         animator.SetTrigger("Attack");
     }
+    
+    #region RPC_Callbacks
 
-        // === RPC client -> host ===
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    // === RPC client -> host ===
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void Rpc_RequestRespawn(int idx, string name)
     {
 
@@ -160,6 +170,18 @@ public class PlayerNetworkController : NetworkBehaviour
     {
         animator.SetTrigger("Attack");
     }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RequestSpawnProjectile()
+    {
+        Vector3 spawnPos = firePoint.position;
+        Quaternion spawnRot = Quaternion.LookRotation(firePoint.forward);
+
+        var projObj = Runner.Spawn(projectilePrefab, spawnPos, spawnRot, Object.InputAuthority);
+        projObj.GetComponent<Projectile>().Init(firePoint.forward, 12f, 5f);
+
+        Debug.Log($"[Host] {PlayerName} spawn projectile tại {spawnPos}");
+    }
+    #endregion
 
     // === Spawn & Respawn ===
     public void SetInitialSpawnPoint(Vector3 position, Quaternion rotation)
