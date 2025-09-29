@@ -118,6 +118,7 @@ public class NetworkGameManager : NetworkRunnerCall
                 {
                     ctrl.CharacterIndex = idx;
                     ctrl.PlayerName = name;
+                    ctrl.SetJoinPoint(pos);
                 }
 
                 Debug.Log($"[NetworkGameManager] Host spawn chính mình Player {player.PlayerId}, CharIndex={idx}, Name={name}");

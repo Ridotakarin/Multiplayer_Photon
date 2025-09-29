@@ -2029,7 +2029,6 @@ GameObject:
   - component: {fileID: 1490332137}
   - component: {fileID: 1490332136}
   - component: {fileID: 1490332135}
-  - component: {fileID: 1490332134}
   - component: {fileID: 1490332133}
   - component: {fileID: 1490332139}
   - component: {fileID: 1490332140}
@@ -2060,27 +2059,7 @@ MonoBehaviour:
   - {fileID: 1599603634}
   - {fileID: 1702056639}
   _CountdownTimer: 0
---- !u!65 &1490332134
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1490332131}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 0.85, y: 1.42, z: 0.85}
-  m_Center: {x: 0, y: 0.6, z: 0}
+  _CurrentState: 0
 --- !u!65 &1490332135
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2667,6 +2646,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3058442350853426088, guid: d3dc1e13460c34a4a9c4d01ef1adc042, type: 3}
+      propertyPath: m_Radius
+      value: 0.63
+      objectReference: {fileID: 0}
     - target: {fileID: 3275364099450270807, guid: d3dc1e13460c34a4a9c4d01ef1adc042, type: 3}
       propertyPath: m_Name
       value: MazeMap
@@ -2722,6 +2705,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1791232344995592717, guid: d3dc1e13460c34a4a9c4d01ef1adc042, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1925296387}
+    - targetCorrespondingSourceObject: {fileID: 1791232344995592717, guid: d3dc1e13460c34a4a9c4d01ef1adc042, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1925296388}
   m_SourcePrefab: {fileID: 100100000, guid: d3dc1e13460c34a4a9c4d01ef1adc042, type: 3}
 --- !u!1 &1925296386 stripped
 GameObject:
@@ -2751,6 +2737,18 @@ CapsuleCollider:
   m_Height: 2.0000002
   m_Direction: 1
   m_Center: {x: 0.00000005960464, y: -0.00012207031, z: -0.00000008940697}
+--- !u!114 &1925296388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925296386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c3e9d7084816f419ed906bff1403d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FinishTrigger
 --- !u!1 &2106286751
 GameObject:
   m_ObjectHideFlags: 0

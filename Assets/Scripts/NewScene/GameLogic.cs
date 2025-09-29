@@ -22,7 +22,7 @@ public class GameLogic : NetworkBehaviour
     // ================= Networked =================
     [Networked] public float CountdownTimer { get; private set; }
     [Networked] private NetworkBool IsCountdownActive { get; set; }
-    [Networked] private GameState CurrentState { get; set; }
+    [Networked] public GameState CurrentState { get; private set; }
 
     private void Awake()
     {
@@ -35,13 +35,11 @@ public class GameLogic : NetworkBehaviour
         if (Object.HasStateAuthority)
         {
             CurrentState = GameState.Waiting;
-
-            // Bắt đầu đếm ngược ngay khi host tạo phòng
             StartCountdown();
         }
     }
 
-    // ====== Host gọi khi có player join ======
+    // ====== Player Join/Leave ======
     public void OnPlayerJoined(PlayerNetworkController player)
     {
         if (!Runner.IsServer) return;
@@ -50,7 +48,19 @@ public class GameLogic : NetworkBehaviour
         {
             ResetCountdown();
         }
+        else if (CurrentState == GameState.Playing)
+        {
+            var players = FindObjectsOfType<PlayerNetworkController>();
+            int index = players.Length % spawnPoints.Length;
+
+            Vector3 pos = spawnPoints[index].position;
+            Quaternion rot = spawnPoints[index].rotation;
+
+            player.SetInitialSpawnPoint(pos, rot);
+            player.Respawn(pos, rot);
+        }
     }
+
     public void OnPlayerLeft(PlayerRef playerRef)
     {
         if (!Runner.IsServer) return;
@@ -60,14 +70,16 @@ public class GameLogic : NetworkBehaviour
             ResetCountdown();
         }
     }
+
     private void ResetCountdown()
     {
         if (!Runner.IsServer) return;
+
         Debug.Log("[GameLogic] Resetting countdown...");
         IsCountdownActive = true;
         CountdownTimer = countdownDuration;
         CurrentState = GameState.Countdown;
-        // Bật panel UI cho tất cả
+
         RPC_ShowCountdown(true);
     }
 
@@ -81,7 +93,9 @@ public class GameLogic : NetworkBehaviour
         CountdownTimer = countdownDuration;
         CurrentState = GameState.Countdown;
 
-        // Bật panel UI cho tất cả
+        // Ẩn bảng Winner nếu còn
+        RPC_HideWinner();
+
         RPC_ShowCountdown(true);
     }
 
@@ -115,7 +129,7 @@ public class GameLogic : NetworkBehaviour
             Vector3 pos = spawnPoints[i % spawnPoints.Length].position;
             Quaternion rot = spawnPoints[i % spawnPoints.Length].rotation;
             p.SetInitialSpawnPoint(pos, rot);
-            p.Respawn();
+            p.Respawn(pos, rot);
         }
 
         Debug.Log("[GameLogic] Game started!");
@@ -132,7 +146,6 @@ public class GameLogic : NetworkBehaviour
 
         RPC_ShowWinner(winner.PlayerName);
 
-        // Restart sau delay
         Runner.StartCoroutine(RestartGameCoroutine());
     }
 
@@ -140,13 +153,18 @@ public class GameLogic : NetworkBehaviour
     {
         yield return new WaitForSeconds(restartDelay);
 
-        // Reset lại tất cả player
+        // Respawn tất cả player về JoinPoint
         var players = FindObjectsOfType<PlayerNetworkController>();
         foreach (var p in players)
         {
-            p.Respawn();
+            Vector3 pos = p.JoinPoint;
+            Quaternion rot = Quaternion.identity;
+
+            p.SetInitialSpawnPoint(pos, rot);
+            p.Respawn(pos, rot);
         }
 
+        // Sau đó đếm ngược lại
         StartCountdown();
     }
 
@@ -158,6 +176,12 @@ public class GameLogic : NetworkBehaviour
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_HideWinner()
+    {
+        UIManager.Instance?.RPC_HideWinner();
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPC_ShowCountdown(bool show)
     {
         UIManager.Instance?.ShowCountdown(show, CountdownTimer);
@@ -165,7 +189,6 @@ public class GameLogic : NetworkBehaviour
 
     private void Update()
     {
-        // Client nào cũng update UI theo CountdownTimer
         if (IsCountdownActive && UIManager.Instance != null)
         {
             UIManager.Instance.ShowCountdown(true, CountdownTimer);

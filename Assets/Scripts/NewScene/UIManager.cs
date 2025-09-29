@@ -51,6 +51,12 @@ public class UIManager : NetworkBehaviour
         winnerPanel.SetActive(true);
         winnerText.text = $"Winner: {winnerName}";
     }
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_HideWinner()
+    {
+        winnerPanel.SetActive(false);
+    }
 
     // === Countdown UI ===
     public void ShowCountdown(bool show, float value = 0)

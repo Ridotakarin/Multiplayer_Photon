@@ -21,6 +21,8 @@ public class PlayerNetworkController : NetworkBehaviour
 
 
     [Networked] public Vector3 InitialSpawnPosition { get; set; }
+    [Networked] public Vector3 JoinPoint { get; set; }
+
     [Networked] public Quaternion InitialSpawnRotation { get; set; }
 
     [Networked] public string PlayerName { get; set; }
@@ -199,8 +201,43 @@ public class PlayerNetworkController : NetworkBehaviour
     {
         if (Object.HasStateAuthority)
         {
-            transform.SetPositionAndRotation(InitialSpawnPosition, InitialSpawnRotation);
-            Debug.Log($"[Server] Respawn player {Object.InputAuthority} tại {InitialSpawnPosition}");
+            var cc = GetComponent<NetworkCharacterController>();
+            if (cc != null)
+            {
+                cc.Teleport(InitialSpawnPosition, InitialSpawnRotation);
+            }
+            else
+            {
+                // fallback nếu không có controller
+                transform.SetPositionAndRotation(InitialSpawnPosition, InitialSpawnRotation);
+            }
+
+            Debug.Log($"[Respawn] {PlayerName} tại {InitialSpawnPosition}");
+        }
+    }
+    public void Respawn(Vector3 pos, Quaternion rot)
+    {
+        if (Object.HasStateAuthority)
+        {
+            var cc = GetComponent<NetworkCharacterController>();
+            if (cc != null)
+            {
+                cc.Teleport(pos, rot); // API có sẵn của Fusion để dịch chuyển an toàn
+            }
+            else
+            {
+                transform.SetPositionAndRotation(pos, rot);
+            }
+
+            Debug.Log($"[Respawn] {PlayerName} tại {pos}");
+        }
+    }
+    public void SetJoinPoint(Vector3 position)
+    {
+        if (Object.HasStateAuthority)
+        {
+            JoinPoint = position;
+            Debug.Log($"[Server] Set JoinPoint cho {PlayerName} tại {position}");
         }
     }
 }
