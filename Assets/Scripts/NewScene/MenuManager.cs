@@ -11,6 +11,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Button hostButton;
     [SerializeField] private Button joinButton;
+    [SerializeField] private Button exitButton;
+    [SerializeField] private Button helpButton;
+    [SerializeField] private GameObject helpUI;
 
     [SerializeField] private GameObject menuUI;
     //[SerializeField] private GameObject lobbyUI;
@@ -43,6 +46,8 @@ public class MenuManager : MonoBehaviour
 
         hostButton?.onClick.AddListener(OnHostUIClicked);
         joinButton?.onClick.AddListener(OnJoinUIClicked);
+        exitButton?.onClick.AddListener(OnExitButton);
+        helpButton?.onClick.AddListener(OnHelpButton);
 
         // UI mặc định
         //lobbyUI?.SetActive(false);
@@ -89,7 +94,12 @@ public class MenuManager : MonoBehaviour
         SelectedCharacterIndex = (SelectedCharacterIndex + 1) % characterDisplayObjects.Length;
         UpdateCharacterDisplay();
     }
-
+    private void OnExitButton()
+    { Application.Quit(); }
+    private void OnHelpButton()
+    {
+        helpUI.SetActive(!helpUI.activeSelf);
+    }
     private void UpdateCharacterDisplay()
     {
         if (characterDisplayObjects != null)
