@@ -130,6 +130,8 @@ public class GameLogic : NetworkBehaviour
             Quaternion rot = spawnPoints[i % spawnPoints.Length].rotation;
             p.SetInitialSpawnPoint(pos, rot);
             p.Respawn(pos, rot);
+
+            p.RPC_SwitchCamera(3f);
         }
 
         Debug.Log("[GameLogic] Game started!");

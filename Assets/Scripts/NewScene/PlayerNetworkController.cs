@@ -119,7 +119,21 @@ public class PlayerNetworkController : NetworkBehaviour
         // Xử lý logic tấn công
         animator.SetTrigger("Attack");
     }
-    
+
+    private IEnumerator ToggleCamera(float delay)
+    {
+        yield return new WaitForSeconds(1);
+        // Tắt camera
+        vCam.Priority = 0;
+        Debug.Log("Switching camera...");
+
+        // Chờ delay
+        yield return new WaitForSeconds(delay);
+
+        // Bật camera
+        vCam.Priority = 20;
+        Debug.Log("Camera switched.");
+    }
     #region RPC_Callbacks
 
     // === RPC client -> host ===
@@ -183,6 +197,12 @@ public class PlayerNetworkController : NetworkBehaviour
 
         Debug.Log($"[Host] {PlayerName} spawn projectile tại {spawnPos}");
     }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_SwitchCamera(float delay)
+    {
+        StartCoroutine(ToggleCamera(delay));
+    }
+
     #endregion
 
     // === Spawn & Respawn ===

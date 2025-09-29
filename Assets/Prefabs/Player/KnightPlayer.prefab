@@ -176,8 +176,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4392354048355185462}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0000000060051475, y: 0.9905182, z: -0.13738173, w: -0.00000004329693}
-  m_LocalPosition: {x: 0, y: 2.0289507, z: 3.6379938}
+  m_LocalRotation: {x: 0.13738187, y: 0.00000008659387, z: -0.0000000120103065, w: 0.9905182}
+  m_LocalPosition: {x: 0, y: 2.0289507, z: -3.6379938}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -196,8 +196,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
   Priority:
-    Enabled: 0
-    m_Value: 0
+    Enabled: 1
+    m_Value: 2
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -749,6 +749,7 @@ MonoBehaviour:
     RawGuidValue: 8553c13a8cdad634ab068d69adbfa0bc
   firePoint: {fileID: 5216166253945446125}
   _InitialSpawnPosition: {x: 0, y: 0, z: 0}
+  _JoinPoint: {x: 0, y: 0, z: 0}
   _InitialSpawnRotation: {x: 0, y: 0, z: 0, w: 0}
   _PlayerName: 
   _CharacterIndex: 0
