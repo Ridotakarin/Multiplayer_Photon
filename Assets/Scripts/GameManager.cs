@@ -1,7 +1,14 @@
-﻿using UnityEngine;
+﻿using Fusion;
 using System.Collections;
-using Fusion;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+
 
 public class GameManager : NetworkBehaviour
 {
+    public static GameManager Instance;
+
+    
+
 }
