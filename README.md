@@ -1,49 +1,79 @@
-# 🌐 Unity Multiplayer - Photon Fusion/PUN2 Project
+<a name="readme-top"></a>
 
-![Unity](https://img.shields.io/badge/Unity-2022.3+-black?style=for-the-badge&logo=unity)
-![Photon](https://img.shields.io/badge/Photon-Networking-blue?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Completed-green?style=for-the-badge)
 
-Dự án nghiên cứu và triển khai cơ chế chơi mạng (Multiplayer) thời gian thực sử dụng giải pháp **Photon**. Tập trung vào việc giải quyết các bài toán đồng bộ hóa dữ liệu giữa các máy khách (Clients) và xây dựng hệ thống phòng chờ (Lobby).
 
----
+<h1 align="center">🌐 Unity Real-Time Multiplayer Framework</h1>
 
-## 📸 Demo Hình ảnh
-*(Hãy chèn ảnh chụp màn hình lúc có 2-3 nhân vật cùng trong một phòng)*
-
-| Network Synchronization | Lobby System |
-| :---: | :---: |
-| ![Sync](https://via.placeholder.com/400x225.png?text=Sync+Movement) | ![Lobby](https://via.placeholder.com/400x225.png?text=Room+Management) |
+<p align="center">
+  <img src="https://img.shields.io/badge/Creator-Nhat%20Huy-red?style=for-the-badge&logo=github" />
+  <img src="https://img.shields.io/badge/Engine-Unity-black?style=for-the-badge&logo=unity" />
+  <img src="https://img.shields.io/badge/Network-Photon-blue?style=for-the-badge" />
+</p>
 
 ---
 
-## ⚙️ Các tính năng kỹ thuật (Technical Features)
+## 👋 About This Project
 
-### 1. Quản lý kết nối (Connection Management)
-* **Master Server Connection:** Xử lý logic kết nối tới Server của Photon, quản lý trạng thái Offline/Online.
-* **Lobby & Room System:** Tạo phòng (Create Room), tham gia phòng có sẵn (Join Room) và liệt kê danh sách phòng đang hoạt động.
-* **Player Customization:** Đồng bộ tên người chơi và màu sắc nhân vật thông qua **Custom Properties**.
+Welcome to **Multiplayer_Photon**. This project is a dedicated research and implementation framework focusing on real-time multiplayer mechanics utilizing **Photon** solutions. 
 
-### 2. Đồng bộ hóa thời gian thực (Real-time Synchronization)
-* **Transform Synchronization:** Sử dụng `Photon View` và `Photon Transform View` để đồng bộ vị trí, vòng quay của nhân vật mượt mà giữa các máy.
-* **Animation Sync:** Đồng bộ các trạng thái Animator (Run, Jump, Attack) thông qua `Photon Animator View`.
-* **RPCs (Remote Procedure Calls):** Sử dụng RPC để gửi các sự kiện tức thời như bắn súng, gây sát thương hoặc kích hoạt hiệu ứng đặc biệt.
-
-### 3. Logic Gameplay mạng
-* **Ownership Transfer:** Xử lý quyền điều khiển đối tượng (Authority) khi người chơi tương tác với vật phẩm trong môi trường.
-* **Latency Compensation:** Kỹ thuật nội suy (Interpolation) để giảm thiểu hiện tượng giật lag do độ trễ mạng.
-* **Network Object Pooling:** Tối ưu hóa việc khởi tạo (Instantiate) và hủy (Destroy) các đối tượng mạng như đạn hoặc hiệu ứng.
+I built this to solve core networking challenges, specifically focusing on low-latency data synchronization across multiple clients, smooth state interpolation, and building a fully modular lobby matchmaking system from scratch.
 
 ---
 
-## 🛠️ Công cụ & Thư viện
+## 🎬 Gameplay Gallery
+
+This section demonstrates the network architecture and synchronization systems scripted within this project:
+
+### 1. Room Matchmaking & Lobby System
+The lobby script manages full room creation logic, allowing players to join existing sessions and synchronize room states globally.
+<p align="center">
+  <img src="README_assets/room_management.gif" width="90%" />
+</p>
+
+### 2. Real-Time State Synchronization 
+Character movement and rotation data are synchronized across clients smoothly using custom interpolation to eliminate jitter caused by network latency.
+<p align="center">
+  <img src="README_assets/sync_movement.gif" width="90%" />
+   <img src="README_assets/sync_movement.gif" width="90%" />
+</p>
+
+Player names and character are bound and synchronized globally utilizing **Custom Properties**, while RPCs instantly trigger discrete events like combat actions.
+<p align="center">
+  <img src="README_assets/customization_demo.gif" width="90%" />
+</p>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+## ⚙️ Technical Features (The Code)
+
+### 1. Connection Management
+* **Master Server Connection:** Handles secure asynchronous connection logic to the Photon Cloud Server and handles transition states between Offline/Online gameplay modes.
+* **Lobby System:** Dynamic creation, joining, and listing of active game sessions.
+* **Player Custom Properties:** Synchronizes localized data (like player usernames and mesh colors) globally across network peers without heavy bandwidth costs.
+
+### 2. Network Synchronization Architecture
+* **Transform Interpolation:** Implements `Photon View` and `Photon Transform View` layers to achieve seamless, lag-compensated position updates across separate game clients.
+* **Animation Syncing:** Synchronizes active Animator states (`Run`, `Jump`, `Attack`) instantly utilizing the `Photon Animator View` pipeline.
+* **RPCs (Remote Procedure Calls):** Handles instantaneous network events—such as firing projectiles, registering hits, and creating impact particles—precisely when they occur.
+
+### 3. Performance & Authority Logic
+* **Ownership Transfer:** Handles dynamic object authority management when players interact with shared physics objects or picking up items in the environment.
+* **Network Object Pooling:** Optimizes memory and network allocation by reusing projectiles and visual effects rather than calling heavy network instantiation/destruction routines.
+
+---
+
+## 🛠️ Tools & Libraries
 * **Engine:** Unity 2022.3+
-* **Networking SDK:** Photon Unity Networking 2 (PUN2) / Photon Fusion (Tùy bản bạn dùng).
-* **Language:** C# nâng cao (Xử lý các tiến trình bất đồng bộ).
+* **Networking SDK:** Photon Unity Networking 2 (PUN2) / Photon Fusion
+* **Language:** Advanced C# (Asynchronous tasks and networked state logic)
 
 ---
 
-## 🚀 Hướng dẫn chạy thử
-1. **Clone Repo:**
+## 🚀 Installation & Setup
+
+### ⚙️ Quick Start
+1. **Clone the Repository:** 
    ```bash
    git clone [https://github.com/Ridotakarin/Multiplayer_Photon.git](https://github.com/Ridotakarin/Multiplayer_Photon.git)
