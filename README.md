@@ -27,20 +27,26 @@ This section demonstrates the network architecture and synchronization systems s
 ### 1. Room Matchmaking & Lobby System
 The lobby script manages full room creation logic, allowing players to join existing sessions and synchronize room states globally.
 <p align="center">
-  <img src="README_assets/room_management.gif" width="90%" />
+  <img src="README_assets/Maze_Lobby.gif" width="90%" />
 </p>
 
-### 2. Real-Time State Synchronization 
+### 2. Real-Time State Synchronization & Game Logic
 Character movement and rotation data are synchronized across clients smoothly using custom interpolation to eliminate jitter caused by network latency.
 <p align="center">
-  <img src="README_assets/sync_movement.gif" width="90%" />
-   <img src="README_assets/sync_movement.gif" width="90%" />
+  <img src="README_assets/Maze_Movement.gif" width="90%" />
 </p>
 
-Player names and character are bound and synchronized globally utilizing **Custom Properties**, while RPCs instantly trigger discrete events like combat actions.
-<p align="center">
-  <img src="README_assets/customization_demo.gif" width="90%" />
-</p>
+---
+
+## 🧭 Gameplay Loop & Objectives
+
+When players enter the room, they are transported to the Maze accompanied by a cutscene introducing the entire map. The first player to reach the treasure in the center of the Maze is declared the winner.
+
+| **Game Start** (Cutscene & Intro) | **Game End** (Victory Condition) |
+| :---: | :---: |
+| <img src="README_assets/Maze_GameStart.gif" width="70%" alt="Maze Game Start"/> | <img src="README_assets/Maze_GameEnd.gif" width="100%" alt="Maze Game End"/> |
+
+---
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
